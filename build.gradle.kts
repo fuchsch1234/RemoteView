@@ -12,14 +12,38 @@ repositories {
     maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
 }
 
+val testContainersVersion = "1.17.6"
+
 kotlin {
     jvm {
         compilations.all {
             kotlinOptions.jvmTarget = "11"
         }
-        withJava()
         testRuns["test"].executionTask.configure {
             useJUnitPlatform()
+        }
+        compilations {
+            val main by getting
+
+            val e2eTests by registering {
+                defaultSourceSet {
+                    kotlin
+                    dependencies {
+                        implementation(main.compileDependencyFiles + main.output.allOutputs)
+                    }
+                }
+
+                tasks.register<Test>("e2eTest") {
+                    group = "verification"
+
+                    useJUnitPlatform()
+
+                    systemProperty("junit.jupiter.extensions.autodetection.enabled", true)
+
+                    classpath = compileDependencyFiles + runtimeDependencyFiles + output.allOutputs
+                    testClassesDirs = output.classesDirs
+                }
+            }
         }
     }
     js(IR) {
@@ -45,6 +69,22 @@ kotlin {
             }
         }
         val jvmTest by getting
+        val jvmE2eTests by getting {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation("org.hamcrest:hamcrest:2.2")
+                runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
+
+                implementation("org.testcontainers:testcontainers-bom:$testContainersVersion")
+                implementation("org.testcontainers:testcontainers:$testContainersVersion")
+                implementation("org.testcontainers:junit-jupiter:$testContainersVersion")
+
+                implementation("org.seleniumhq.selenium:selenium-java:4.6.0")
+                implementation("io.github.bonigarcia:webdrivermanager:5.3.1")
+
+                implementation("ch.qos.logback:logback-classic:1.4.5")
+            }
+        }
         val jsMain by getting {
             dependencies {
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-react:18.2.0-pre.346")
@@ -70,4 +110,5 @@ tasks.named<Copy>("jvmProcessResources") {
 tasks.named<JavaExec>("run") {
     dependsOn(tasks.named<Jar>("jvmJar"))
     classpath(tasks.named<Jar>("jvmJar"))
+    println(classpath)
 }
