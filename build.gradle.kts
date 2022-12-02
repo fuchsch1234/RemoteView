@@ -1,5 +1,8 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     kotlin("multiplatform") version "1.7.21"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
     application
 }
 
@@ -107,8 +110,18 @@ tasks.named<Copy>("jvmProcessResources") {
     from(jsBrowserDistribution)
 }
 
+tasks.withType<ShadowJar> {
+    manifest {
+        attributes("Main-Class" to "de.fuchsch.application.ServerKt")
+    }
+    archiveClassifier.set("all")
+    val main by kotlin.jvm().compilations
+    from(main.output)
+    configurations += main.compileDependencyFiles as Configuration
+    configurations += main.runtimeDependencyFiles as Configuration
+}
+
 tasks.named<JavaExec>("run") {
-    dependsOn(tasks.named<Jar>("jvmJar"))
-    classpath(tasks.named<Jar>("jvmJar"))
-    println(classpath)
+    dependsOn(tasks.named<ShadowJar>("shadowJar"))
+    classpath(tasks.named<ShadowJar>("shadowJar"))
 }
