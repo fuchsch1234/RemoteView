@@ -16,6 +16,8 @@ repositories {
     maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
 }
 
+val ktorVersion = "2.0.2"
+val logbackVersion = "1.4.5"
 val testContainersVersion = "1.17.6"
 
 kotlin {
@@ -71,9 +73,13 @@ kotlin {
         }
         val jvmMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-server-netty:2.0.2")
-                implementation("io.ktor:ktor-server-html-builder-jvm:2.0.2")
+                implementation("io.ktor:ktor-server-netty:$ktorVersion")
+                implementation("io.ktor:ktor-server-html-builder-jvm:$ktorVersion")
+                implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.2")
+
+                implementation("ch.qos.logback:logback-classic:$logbackVersion")
             }
         }
         val jvmTest by getting
@@ -90,7 +96,7 @@ kotlin {
                 implementation("org.seleniumhq.selenium:selenium-java:4.6.0")
                 implementation("io.github.bonigarcia:webdrivermanager:5.3.1")
 
-                implementation("ch.qos.logback:logback-classic:1.4.5")
+                implementation("ch.qos.logback:logback-classic:$logbackVersion")
             }
         }
         val jsMain by getting {
