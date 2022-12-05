@@ -1,5 +1,6 @@
 package de.fuchsch.remoteview
 
+import de.fuchsch.remoteview.dto.Configuration
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -34,6 +35,10 @@ fun Application.module() {
     routing {
         get("/") {
             call.respondHtml(HttpStatusCode.OK, HTML::index)
+        }
+        get("/config.json") {
+            val configuration = Configuration(clientId)
+            call.respond(configuration)
         }
         static("/static") {
             resources()
