@@ -1,4 +1,4 @@
-package de.fuchsch.remoteview.extension
+package de.fuchsch.remoteview
 
 import io.github.bonigarcia.wdm.WebDriverManager
 import org.hamcrest.MatcherAssert.assertThat
@@ -26,7 +26,6 @@ class TitleTest {
     fun `title is set`() {
         driver.get("http://127.0.0.1:8080")
         assertThat(driver.title, containsString("Ktor"))
-
     }
 
 }
