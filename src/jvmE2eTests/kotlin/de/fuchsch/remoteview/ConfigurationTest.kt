@@ -16,7 +16,7 @@ class ConfigurationTest(private val environment: ApplicationEngineEnvironment) {
 
     @BeforeEach
     fun setup() {
-        driver = WebDriverManager.firefoxdriver().create()
+        driver = WebDriverManager.chromedriver().create()
     }
 
     @AfterEach
